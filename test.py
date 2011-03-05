@@ -62,10 +62,12 @@ def main():
     i += 1
 
   runner = unittest.TextTestRunner(verbosity=2)
-  runner.run(suite)
+  results = runner.run(suite)
 
-  # FIXME return error if any tests fail
-  return 0
+  if len(results.failures) or len(results.errors):
+    return 1
+  else:
+    return 0
 
 
 if __name__ == '__main__':
