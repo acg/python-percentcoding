@@ -12,6 +12,7 @@ setup(
       [
         'codec.c',
         'module.c',
+        'percentcoding.c',
       ],
       extra_compile_args=['-fPIC'],
       define_macros=[],

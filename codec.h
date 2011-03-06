@@ -7,7 +7,7 @@
 
 typedef struct {
   PyObject_HEAD
-  char chrtohex[256][2];
+  char chrtohex[256*2];
 } Codec;
 
 extern PyTypeObject CodecType;

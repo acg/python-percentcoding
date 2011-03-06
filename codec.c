@@ -1,31 +1,6 @@
 #include "codec.h"
 #include "Python.h"
-
-
-/* Utility function. Not exposed. */
-
-size_t btox(register uint8_t c, register char* s)
-{
-  register unsigned int pos;
-  register uint8_t n;
-
-  s+=1;
-
-  for (pos=0; pos<2; pos++)
-  {
-    n = c & 0x0f;
-    c >>= 4;
-
-    if (s) {
-      if (n < 10)
-        *s-- = '0' + n;
-      else
-        *s-- = 'a' + (n - 10);
-    }
-  }
-
-  return pos;
-}
+#include "percentcoding.h"
 
 
 /* Codec methods */
@@ -53,15 +28,16 @@ Codec_init(Codec *self, PyObject *args, PyObject *kwds)
 
   /* Initialize the byte -> 2 hex char lookup table.
      By default, everything is "unsafe" and gets percent encoded.
-     Anything in safeset is okay. */
+     Anything in safeset is okay.
+     The percent character itself '%' will always get encoded. */
   
   unsigned int i;
   for (i=0; i<256; i++)
-    btox((uint8_t)i, self->chrtohex[(uint8_t)i]);
+    btox((uint8_t)i, &self->chrtohex[(uint8_t)i*2]);
 
   const uint8_t* p;
   for (i=0, p=(uint8_t*)safeset; i<len; i++, p++)
-    self->chrtohex[*p][0] = self->chrtohex[*p][1] = 0;
+    self->chrtohex[*p*2] = self->chrtohex[*p*2+1] = 0;
 
   return 0;
 }
@@ -78,41 +54,20 @@ Codec_encode(Codec *self, PyObject *args)
 
   char* out = NULL;
   PyObject *result = NULL;
-  const char *p;
-  char *q;
-  char c0, c1;
   Py_ssize_t size;
-  int pass;
 
-  for (pass=0; pass<2; pass++)
-  {
-    size = 0;
+  /* First pass: calculate size of encoded string.
+     Create a new string object of exactly that size. */
 
-    for (p=in, q=out; p-in<inlen; p++)
-    {
-      c0 = self->chrtohex[(uint8_t)*p][0];
-      c1 = self->chrtohex[(uint8_t)*p][1];
+  size = percent_encode(in, inlen, NULL, self->chrtohex);
 
-      if (*p == '%') {
-        if (q) { *q++ = '%'; *q++ = '%'; }
-        size += 2;
-      }
-      else if (c0 | c1) {
-        if (q) { *q++ = '%'; *q++ = c0; *q++ = c1; }
-        size += 3;
-      }
-      else {
-        if (q) *q++ = *p;
-        size += 1;
-      }
-    }
+  if (!(result = PyString_FromStringAndSize(NULL,size)))
+    return NULL;
 
-    if (pass == 0) {
-      if (!(result = PyString_FromStringAndSize(NULL,size)))
-        return NULL;
-      out = PyString_AsString(result);
-    }
-  }
+  /* Second pass: actually encode this time. */
+
+  out = PyString_AsString(result);
+  size = percent_encode(in, inlen, out, self->chrtohex);
 
   return result;
 }
@@ -129,72 +84,20 @@ Codec_decode(Codec *self, PyObject *args)
 
   char* out = NULL;
   PyObject *result = NULL;
-  const char *p;
-  char *q;
   Py_ssize_t size;
-  int nibble = 0;
-  unsigned char byte = 0;
-  char c;
-  int pass;
 
-  for (pass=0; pass<2; pass++)
-  {
-    size = 0;
+  /* First pass: calculate size of decoded string.
+     Create a new string object of exactly that size. */
 
-    for (p=in, q=out; p-in<inlen; p++)
-    {
-      c = *p;
+  size = percent_decode(in, inlen, NULL);
 
-      if (nibble)
-      {
-        if (c >= '0' && c <= '9')
-          byte |= (c - '0');
-        else if (c >= 'a' && c <= 'f')
-          byte |= 0xa + (c - 'a');
-        else if (c >= 'A' && c <= 'F')
-          byte |= 0xA + (c - 'A');
-        else if (c == '%' && nibble == 1) {
-          if (q) *q++ = '%';
-          size++;
-          nibble = byte = 0;
-        }
-        else {
-            /* Invalid hex, copy previous token literally */
-            do {
-              char d = *(p-nibble);
-              if (q) *q++ = d;
-              size++;
-            } while (nibble--);
-            nibble = byte = 0;
-        }
+  if (!(result = PyString_FromStringAndSize(NULL,size)))
+    return NULL;
 
-        if (nibble == 1) {
-          nibble++;
-          byte <<= 4;
-        }
-        else if (nibble == 2) {
-          if (q) *q++ = (char)byte;
-          ++size;
-          nibble = byte = 0;
-        }
-      }
-      else
-      {
-        if (c == '%')
-          nibble = 1;
-        else {
-          if (q) *q++ = c;
-          ++size;
-        }
-      }
-    }
+  /* Second pass: actually decode this time. */
 
-    if (pass == 0) {
-      if (!(result = PyString_FromStringAndSize(NULL,size)))
-        return NULL;
-      out = PyString_AsString(result);
-    }
-  }
+  out = PyString_AsString(result);
+  size = percent_decode(in, inlen, out);
 
   return result;
 }
