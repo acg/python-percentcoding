@@ -29,7 +29,7 @@ Codec_init(Codec *self, PyObject *args, PyObject *kwds)
   /* Initialize the byte -> 2 hex char lookup table.
      By default, everything is "unsafe" and gets percent encoded.
      Anything in safeset is okay.
-     The percent character itself '%' will always get encoded. */
+     The percent character itself is never safe. */
   
   unsigned int i;
   for (i=0; i<256; i++)
@@ -37,7 +37,8 @@ Codec_init(Codec *self, PyObject *args, PyObject *kwds)
 
   const uint8_t* p;
   for (i=0, p=(uint8_t*)safeset; i<len; i++, p++)
-    self->chrtohex[*p*2] = self->chrtohex[*p*2+1] = 0;
+    if (*p != '%')
+      self->chrtohex[*p*2] = self->chrtohex[*p*2+1] = 0;
 
   return 0;
 }

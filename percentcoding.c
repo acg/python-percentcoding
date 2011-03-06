@@ -14,11 +14,7 @@ size_t percent_encode(const char *src, size_t len, char *dst, const char *tohex)
     c0 = tohex[c*2];
     c1 = tohex[c*2+1];
 
-    if (c == '%') {
-      if (dst) { *dst++ = '%'; *dst++ = '%'; }
-      size += 2;
-    }
-    else if (c0 | c1) {
+    if (c0 | c1) {
       if (dst) { *dst++ = '%'; *dst++ = c0; *dst++ = c1; }
       size += 3;
     }

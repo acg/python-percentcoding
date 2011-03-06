@@ -33,15 +33,15 @@ URI_SAFE = ''.join( set([c for c in URI_UNRESERVED]) - set([c for c in URI_RESER
 
 TRUTH = [
   ("empty", URI_SAFE, "", ""),
-  ("lone percent", URI_SAFE, "%", "%%"),
-  ("double percent", URI_SAFE, "%%", "%%%%"),
+  ("lone percent", URI_SAFE, "%", "%25"),
+  ("double percent", URI_SAFE, "%%", "%25%25"),
   ("whitespace", URI_SAFE, " \r\n\t\v\f", "%20%0d%0a%09%0b%0c"),
   ("unreserved", URI_SAFE, URI_UNRESERVED, URI_UNRESERVED),
   ("null", URI_SAFE, "\x00", "%00"),
   ("embedded null", URI_SAFE, "abc\x00def", "abc%00def"),
   ("long", URI_SAFE, " xyz " * 1000, "%20xyz%20" * 1000),
   ("ampersand", URI_SAFE, "&", "%26"),
-  ("symbols", URI_SAFE, '!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~', "%21%22%23%24%%%26%27%28%29%2a%2b%2c-.%2f%3a%3b%3c%3d%3e%3f%40%5b%5c%5d%5e_%60%7b%7c%7d~"),
+  ("symbols", URI_SAFE, '!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~', "%21%22%23%24%25%26%27%28%29%2a%2b%2c-.%2f%3a%3b%3c%3d%3e%3f%40%5b%5c%5d%5e_%60%7b%7c%7d~"),
 ]
 
 
