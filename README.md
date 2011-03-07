@@ -66,9 +66,9 @@ The `"%%"` character sequence decodes to `'%'`, but is not the canonical encodin
 
 When decoding, if an invalid hex sequence is encountered (eg `"%az"`), it is copied as-is.
 
-Per the spec, Unicode and UTF-8 strings are encoded byte-wise, resulting in an ASCII string. When decoding, the result is also an ASCII string, which may need to be converted back to Unicode using the Python string method `decode`:
+Per the spec, Unicode and UTF-8 strings are encoded byte-wise, resulting in an ASCII string. When decoding, the result is also an ASCII string, which if originally Unicode can be recovered using the Python string method `decode`:
 
-   unquote(s).decode('utf8')
+    unquote(s).decode('utf8')
 
 ## Installation ##
 
