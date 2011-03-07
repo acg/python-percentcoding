@@ -1,0 +1,16 @@
+Source: python-percentcoding
+Section: admin
+Priority: extra
+Maintainer: Alan Grow <alangrow+percentcoding@gmail.com>
+Build-depends: debhelper (>= 7), python-support
+Standards-Version: 0.1.0
+Vcs-Git: https://acg@github.com/acg/python-percentcoding.git
+
+Package: python-percentcoding
+Architecture: all
+Section: python
+Build-Depends: python-support (>= 1.0.0), python (>= 2.5)
+Depends: ${misc:Depends}, ${python:Depends}, python (>= 2.5)
+Description: fast percent encoding and decoding for Python
+  This library exposes a fast C implementation of percent encoding and decoding  to Python. URL encoding is a specific instance of this.
+
