@@ -1,6 +1,6 @@
 # percentcoding - fast url encoding and decoding for Python #
 
-Percent encoding is defined for URIs in [RFC 3986](http://tools.ietf.org/html/rfc3986#section-2.1). It is also useful in more general purpose text escaping. Unlike C backslash escaping, which requires that every "unsafe" character be explicitly named (eg. `0x0a` corresponds to `\n`), percent encoding can easily accommodate an arbitrary set of "unsafe" characters.
+Percent encoding is defined for URIs in [RFC 3986](http://tools.ietf.org/html/rfc3986#section-2.1). It is also useful for general purpose text escaping. Unlike C backslash escaping, which requires that every "unsafe" character be explicitly named (eg. `0x0a` corresponds to `\n`), percent encoding can easily accommodate an arbitrary set of "unsafe" characters.
 
 This library exposes a fast C implementation of percent encoding and decoding to Python. A unit test suite is included.
 
@@ -47,13 +47,15 @@ The `percentcoding` library is about 10x faster than the standard `urllib.quote`
 
 ## Notes ##
 
-All ASCII characters *not* occurring in the safe set are considered unsafe.
+(TODO: move into pydoc)
+
+All ASCII characters *not* occurring in the safe set are considered unsafe and will be escaped by `encode`.
 
 The `'+'` character does not decode to a space, as is necessary for processing `application/x-www-form-urlencoded`. See the following examples.
 
 To form decode a string `s`:
 
-    quote(s.replace("+"," "))
+    unquote(s.replace("+"," "))
 
 To form encode a string `s`:
 
@@ -61,6 +63,12 @@ To form encode a string `s`:
     codec.encode(s.replace(" ","+"))
 
 The `"%%"` character sequence decodes to `'%'`, but is not the canonical encoding.
+
+When decoding, if an invalid hex sequence is encountered (eg `"%az"`), it is copied as-is.
+
+Per the spec, Unicode and UTF-8 strings are encoded byte-wise, resulting in an ASCII string. When decoding, the result is also an ASCII string, which may need to be converted back to Unicode using the Python string method `decode`:
+
+   unquote(s).decode('utf8')
 
 ## Installation ##
 
