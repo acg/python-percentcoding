@@ -72,7 +72,12 @@ Per the spec, Unicode and UTF-8 strings are encoded byte-wise, resulting in an A
 
 ## Installation ##
 
-Until there's real packaging for your system:
+Ubuntu / Debian users:
+
+    fakeroot ./debian/rules binary
+    dpkg -i ../python-percentcoding*.deb
+
+If there's no "real" packaging for your system yet:
 
     ./setup.py build_ext --inplace
     ./test.py
