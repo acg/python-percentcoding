@@ -51,16 +51,7 @@ The `percentcoding` library is about 10x faster than the standard `urllib.quote`
 
 All ASCII characters *not* occurring in the safe set are considered unsafe and will be escaped by `encode`.
 
-The `'+'` character does not decode to a space, as is necessary for processing `application/x-www-form-urlencoded`. See the following examples.
-
-To form decode a string `s`:
-
-    unquote(s.replace("+"," "))
-
-To form encode a string `s`:
-
-    codec = percentcoding.Codec(URI_SAFE_FORM)
-    codec.encode(s.replace(" ","+"))
+With `quote` and `unquote`, the `'+'` character does not map to a space, as is necessary for processing `application/x-www-form-urlencoded`. Like `urllib`, `percentcoding` exports `quote_plus` and `unquote_plus` for that.
 
 The `"%%"` character sequence decodes to `'%'`, but is not the canonical encoding.
 
