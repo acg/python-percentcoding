@@ -2,7 +2,7 @@
 
 """percentcoding: fast percent encoding and decoding
 
-An example of percent encoding is the one defined for URIs in RFC 3986. Percent encoding can also be used for general purpose text escaping. Unlike C backslash escaping, which requires that every reserved character be explicitly named (eg. 0x0a corresponds to \\n), percent encoding can easily accommodate an arbitrary set of reserved characters. For the specific case of URI escaping, the percentcoding library provides 10x faster drop-in replacement for the urllib.quote, urllib.unquote, urllib.quote_plus, and urllib.unquote_plus.
+An example of percent encoding is the one defined for URIs in RFC 3986. Percent encoding can also be used for general purpose text escaping. Unlike C backslash escaping, which requires that every reserved character be explicitly named (eg. 0x0a corresponds to \\n), percent encoding can easily accommodate an arbitrary set of reserved characters. For the specific case of URI escaping, the percentcoding library provides a 10x faster drop-in replacement for the urllib.quote, urllib.unquote, urllib.quote_plus, and urllib.unquote_plus functions.
 """
 
 classifiers = """\
