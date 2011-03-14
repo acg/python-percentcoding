@@ -1,13 +1,14 @@
-# percentcoding - fast url encoding and decoding for Python #
+# percentcoding - fast url encoding and decoding #
 
-Percent encoding is defined for URIs in [RFC 3986](http://tools.ietf.org/html/rfc3986#section-2.1). It is also useful for general purpose text escaping. Unlike C backslash escaping, which requires that every "unsafe" character be explicitly named (eg. `0x0a` corresponds to `\n`), percent encoding can easily accommodate an arbitrary set of "unsafe" characters.
+Percent encoding is a generalization of the text escaping method defined for URIs in [RFC 3986](http://tools.ietf.org/html/rfc3986#section-2.1). Unlike C backslash escaping, which requires that every reserved character be explicitly named (eg. 0x0a corresponds to \n), percent encoding can easily accommodate an arbitrary set of reserved characters.
 
-This library exposes a fast C implementation of percent encoding and decoding to Python. A unit test suite is included.
+For the specific case of URI escaping, the percentcoding library also provides a 10x faster drop-in replacement for the `urllib.quote`, `urllib.unquote`, `urllib.quote_plus`, and `urllib.unquote_plus` functions. A unit test suite is included.
 
 ## Examples ##
 
-As a replacement for `urllib.quote` and `urllib.unquote`:
+As a faster replacement for `urllib.quote` and `urllib.unquote`:
 
+    #!/usr/bin/env python
     from percentcoding import quote, unquote
     str = "This is a test!"
     escaped = quote(str)
@@ -16,6 +17,7 @@ As a replacement for `urllib.quote` and `urllib.unquote`:
 
 Escaping whitespace in whitespace-delimited records:
 
+    #!/usr/bin/env python
     import percentcoding
     import string
 
