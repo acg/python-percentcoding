@@ -1,0 +1,79 @@
+#!/usr/bin/env python
+
+import sys
+import string
+from optparse import OptionParser
+import percentcoding
+
+parser = OptionParser(usage="%prog: [options] [file]")
+parser.add_option('-v', '--verbose', action='store_true')
+parser.add_option('-e', '--encode', action='store_true')
+parser.add_option('-d', '--decode', action='store_true')
+parser.add_option('-s', '--safe', default=[], action='append', help="add characters to the reserved set")
+parser.add_option('-S', '--safe-class', default=[], action='append', help="add a class to the reserved set")
+parser.add_option('-u', '--unsafe', default=[], action='append', help="add characters to the unreserved set")
+parser.add_option('-U', '--unsafe-class', default=[], action='append', help="add a class to the unreserved set")
+parser.add_option('-b', '--blocksize', default=4096, help="set read buffer size")
+(options, args) = parser.parse_args()
+
+ASCII = set([chr(c) for c in xrange(255)])
+
+string_classes = {
+  'all': ''.join(ASCII),
+  'print': string.printable,
+  'nonprint': ''.join( ASCII - set([c for c in string.printable]) ),
+  'letter': string.ascii_letters,
+  'digit': string.digits,
+  'hex': string.hexdigits,
+  'oct': string.octdigits,
+  'lower': string.ascii_lowercase,
+  'upper': string.ascii_uppercase,
+  'space': string.whitespace,
+}
+
+command = 'encode'
+safe = ""
+unsafe = ""
+
+for s in options.safe:
+  safe += s.decode('string_escape')
+for s in options.safe_class:
+  safe += string_classes[s]
+for s in options.unsafe:
+  unsafe += s.decode('string_escape')
+for s in options.unsafe_class:
+  unsafe += string_classes[s]
+
+safe = ''.join( set([c for c in safe]) - set([c for c in unsafe]) )
+codec = percentcoding.Codec(safe)
+
+if options.encode:
+  f = codec.encode
+elif options.decode:
+  f = codec.decode
+
+if len(args):
+  fin = file(args[0])
+else:
+  fin = sys.stdin
+
+eof = False
+buf = ""
+blocksize = int(options.blocksize)
+
+while not eof:
+  block = fin.read(blocksize)
+  if block == "":
+    eof = True
+  else:
+    buf += block
+
+  # avoid decoding the tail end of the buffer if it contains a partial '%..'
+  if len(buf):
+    if options.encode or buf[-3:].find("%") < 0:
+      print f(buf),
+      buf = ""
+    else:
+      print f(buf[:-3]),
+      buf = buf[-3:]
+
