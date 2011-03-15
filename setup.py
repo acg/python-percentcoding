@@ -36,6 +36,7 @@ setup(
     ),
   ],
   packages=['percentcoding'],
+  scripts=['percent'],
   maintainer="Alan Grow",
   maintainer_email="alangrow+percentcoding@gmail.com",
   url="https://github.com/acg/python-percentcoding",

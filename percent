@@ -13,7 +13,6 @@ parser.add_option('-s', '--safe', default=[], action='append', help="add charact
 parser.add_option('-S', '--safe-class', default=[], action='append', help="add a class to the reserved set")
 parser.add_option('-u', '--unsafe', default=[], action='append', help="add characters to the unreserved set")
 parser.add_option('-U', '--unsafe-class', default=[], action='append', help="add a class to the unreserved set")
-parser.add_option('-b', '--blocksize', default=4096, help="set read buffer size")
 (options, args) = parser.parse_args()
 
 ASCII = set([chr(c) for c in xrange(255)])
@@ -51,29 +50,17 @@ if options.encode:
   f = codec.encode
 elif options.decode:
   f = codec.decode
+else:
+  raise Exception("must specify either -e or -d")
 
 if len(args):
   fin = file(args[0])
 else:
   fin = sys.stdin
 
-eof = False
-buf = ""
-blocksize = int(options.blocksize)
+# FIXME read blockwise and use an incremental parser decoder,
+# will be much faster than linewise
 
-while not eof:
-  block = fin.read(blocksize)
-  if block == "":
-    eof = True
-  else:
-    buf += block
-
-  # avoid decoding the tail end of the buffer if it contains a partial '%..'
-  if len(buf):
-    if options.encode or buf[-3:].find("%") < 0:
-      print f(buf),
-      buf = ""
-    else:
-      print f(buf[:-3]),
-      buf = buf[-3:]
+for line in fin:
+  print f(line),
 

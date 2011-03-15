@@ -15,6 +15,7 @@ hilite_markdown.py
 LICENSE
 MANIFEST
 module.c
+percent
 percentcoding.c
 percentcoding.h
 percentcoding/__init__.py
