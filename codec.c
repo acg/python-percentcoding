@@ -47,14 +47,17 @@ Codec_init(Codec *self, PyObject *args, PyObject *kwds)
 static PyObject *
 Codec_encode(Codec *self, PyObject *args)
 {
-  const char* in = NULL;
+  char* in = NULL;
   int inlen = 0;
+  PyObject *result = NULL;
 
-  if (!PyArg_ParseTuple(args, "s#:encode", &in, &inlen))
-    return NULL;
+  /* Make sure we can handle unicode string inputs.
+     The encoded result will always be a plain ascii string. */
+
+  if (!PyArg_ParseTuple(args, "es#:encode", "utf8", &in, &inlen))
+    goto done;
 
   char* out = NULL;
-  PyObject *result = NULL;
   Py_ssize_t size;
 
   /* First pass: calculate size of encoded string.
@@ -63,13 +66,15 @@ Codec_encode(Codec *self, PyObject *args)
   size = percent_encode(in, inlen, NULL, self->chrtohex);
 
   if (!(result = PyString_FromStringAndSize(NULL,size)))
-    return NULL;
+    goto done;
 
   /* Second pass: actually encode this time. */
 
   out = PyString_AsString(result);
   size = percent_encode(in, inlen, out, self->chrtohex);
 
+done:
+  if (in) PyMem_Free(in);
   return result;
 }
 
