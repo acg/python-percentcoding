@@ -22,7 +22,7 @@ doclines = __doc__.split("\n")
 
 setup(
   name='percentcoding',
-  version='0.1',
+  version='0.2',
   ext_modules=[
     Extension(
       'percentcoding.cext',
