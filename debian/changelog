@@ -1,3 +1,12 @@
+python-percentcoding (0.2) unstable; urgency=low
+ 
+  * Add script `percent` for command line encoding and decoding.
+  * Support for unicode strings in decode().
+  * Add quote_plus and quote_unplus.
+  * Update documentation.
+   
+ -- Alan Grow <alangrow+percentcoding@gmail.com>  Wed, 16 Mar 2011 18:55:22 -0400
+
 python-percentcoding (0.1) unstable; urgency=low
   
   * Initial release
