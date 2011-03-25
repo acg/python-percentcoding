@@ -52,9 +52,10 @@ Codec_encode(Codec *self, PyObject *args)
   PyObject *result = NULL;
 
   /* Make sure we can handle unicode string inputs.
-     The encoded result will always be a plain ascii string. */
+     The encoded result will always be a plain ascii string.
+     FIXME not true -- eg what if safe set has 0xff */
 
-  if (!PyArg_ParseTuple(args, "es#:encode", "utf8", &in, &inlen))
+  if (!PyArg_ParseTuple(args, "et#:encode", "utf8", &in, &inlen))
     goto done;
 
   char* out = NULL;
