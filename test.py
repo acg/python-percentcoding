@@ -16,7 +16,8 @@ class FunctionTestCase(unittest.TestCase):
       setattr(self, k, v)
 
   def runTest(self):
-    self.assertEqual( self.func(*self.args,**self.kwargs), self.expected )
+    computed = self.func(*self.args,**self.kwargs)
+    self.assertEqual( computed, self.expected )
 
   def shortDescription(self):
     return self.name
@@ -34,6 +35,7 @@ TEST_BOTH = TEST_ENCODE | TEST_DECODE
 # TODO add tests with different safe character sets
 
 TRUTH = [
+  # name             flags      safe      decoded   encoded  
   ("empty",          TEST_BOTH, URI_SAFE, "", ""),
   ("lone percent",   TEST_BOTH, URI_SAFE, "%", "%25"),
   ("double percent", TEST_BOTH, URI_SAFE, "%%", "%25%25"),
