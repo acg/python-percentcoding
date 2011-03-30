@@ -90,7 +90,7 @@ size_t percent_decode(const char *src, size_t len, char *dst)
 
 /* Utility function. */
 
-size_t btox(register uint8_t c, register char* s)
+size_t btox(register uint8_t c, register char* s, register char a)
 {
   register unsigned int pos;
   register uint8_t n;
@@ -106,7 +106,7 @@ size_t btox(register uint8_t c, register char* s)
       if (n < 10)
         *s-- = '0' + n;
       else
-        *s-- = 'a' + (n - 10);
+        *s-- = a + (n - 10);
     }
   }
 

@@ -20,10 +20,11 @@ Codec_new(PyTypeObject *type, PyObject *arg, PyObject *kwds)
 static int
 Codec_init(Codec *self, PyObject *args, PyObject *kwds)
 {
+  char a = 'a';
   const char* safeset = NULL;
   int len = 0;
 
-  if (!PyArg_ParseTuple(args, "s#:init", &safeset, &len))
+  if (!PyArg_ParseTuple(args, "s#|c:init", &safeset, &len, &a))
     return -1;
 
   /* Initialize the byte -> 2 hex char lookup table.
@@ -33,7 +34,7 @@ Codec_init(Codec *self, PyObject *args, PyObject *kwds)
   
   unsigned int i;
   for (i=0; i<256; i++)
-    btox((uint8_t)i, &self->chrtohex[(uint8_t)i*2]);
+    btox((uint8_t)i, &self->chrtohex[(uint8_t)i*2], a);
 
   const uint8_t* p;
   for (i=0, p=(uint8_t*)safeset; i<len; i++, p++)

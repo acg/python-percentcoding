@@ -8,7 +8,7 @@ size_t percent_encode(const char *src, size_t len, char *dst, const char *tohex)
 
 size_t percent_decode(const char *src, size_t len, char *dst);
 
-size_t btox(register uint8_t c, register char* s);
+size_t btox(register uint8_t c, register char* s, register char a);
 
 #endif
 
